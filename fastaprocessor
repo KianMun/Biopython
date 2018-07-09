@@ -1,0 +1,38 @@
+fhandle = open(r"")
+import Bio
+from Bio import SeqIO
+
+fasta = SeqIO.parse(fhandle,"fasta")
+rname = []
+seq = []
+for f in fasta:
+    name, sequences = f.id, str(f.seq)
+    rname.append(name)
+    seq.append(sequences)
+    rname_seq = dict(zip(rname,seq))
+
+print(rname_seq)
+print('Number of records:', '\n', len(rname_seq))
+
+seq_length = []
+for i in seq:
+    seq_length.append(len(i))
+    rname_seqlength = dict (zip(rname,seq_length))
+
+
+print('Max sequence length', '\n', max(rname_seqlength,key=rname_seqlength.get),': ',max(seq_length))
+print('Min sequence length', '\n', min(rname_seqlength,key=rname_seqlength.get),': ',min(seq_length))
+
+import re
+#?! if ...doesn't match TAA, TAG, TGA will continue to add, i.e as long as it doesn't find the end codon.
+#?: Non capturing version of regular parentheses. mathces whatever regular expression is inside the parentheses
+#* RE to match 0 or more repetitions preceding RE, as many repetition as possible
+# ... matches whatever regular expression is inside the parentheses and indicares the start and end of a group
+
+print(max(re.findall(r'ATG(?:(?!TAA|TAG|TGA)...)*(?:TAA|TAG|TGA)',str(rname_seq)),key= len))
+print(min(re.findall(r'ATG(?:(?!TAA|TAG|TGA)...)*(?:TAA|TAG|TGA)',str(rname_seq)),key= len))
+
+orf=[]
+for i in seq:
+    orf.append(re.findall(r'ATG(?:(?!TAA|TAG|TGA)...)*(?:TAA|TAG|TGA)',str(rname_seq)))
+    orf_dict = dict(zip(rname,orf))
