@@ -32,7 +32,19 @@ import re
 print(max(re.findall(r'ATG(?:(?!TAA|TAG|TGA)...)*(?:TAA|TAG|TGA)',str(rname_seq)),key= len))
 print(min(re.findall(r'ATG(?:(?!TAA|TAG|TGA)...)*(?:TAA|TAG|TGA)',str(rname_seq)),key= len))
 
-orf=[]
+import re
+
+
+
+orf = [re.findall(r'ATG(?:(?!TAA|TAG|TGA)...)*(?:TAA|TAG|TGA)', i) for i in seq]
+print(orf)
+orf_lengths = [len(j) for i in orf for j in i]
+print(orf_lengths)
+print(sum(orf_lengths))
+
+orf_2 = []
 for i in seq:
-    orf.append(re.findall(r'ATG(?:(?!TAA|TAG|TGA)...)*(?:TAA|TAG|TGA)',str(rname_seq)))
-    orf_dict = dict(zip(rname,orf))
+    for j in range(1,len(i),3):
+        orf_2.append(re.findall(r'ATG(?:(?!TAA|TAG|TGA)...)*(?:TAA|TAG|TGA)', i))
+
+print(orf_2)
