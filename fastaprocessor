@@ -32,19 +32,35 @@ import re
 print(max(re.findall(r'ATG(?:(?!TAA|TAG|TGA)...)*(?:TAA|TAG|TGA)',str(rname_seq)),key= len))
 print(min(re.findall(r'ATG(?:(?!TAA|TAG|TGA)...)*(?:TAA|TAG|TGA)',str(rname_seq)),key= len))
 
-import re
+def get_orf(sequence):
+    # Get ATG
+    start_indexs = []
+    stop_indexs = []
+    for i in range(2, len(sequence), 3): #range(0=first, 1 = 2nd, 2=3rd reading frame)
+        if sequence[i:i+3] == "ATG":
+            start_indexs.append(i)
 
+    # Find all stop codon
+    for i in range(2, len(sequence), 3): #range(0=first, 1 = 2nd, 2=3rd reading frame)
+        stops =["TAA", "TAG", "TGA"]
+        if sequence[i:i+3] in stops:
+            stop_indexs.append(i)
 
+    orf = []
+    mark = 0
+    for i in range(0,len(start_indexs)):
+        for j in range(0, len(stop_indexs)):
+            if start_indexs[i] < stop_indexs[j] and start_indexs[i] > mark:
+                orf.append(sequence[start_indexs[i]:stop_indexs[j]+3])
+                mark = stop_indexs[j]+3
+                break
+    return orf
 
-orf = [re.findall(r'ATG(?:(?!TAA|TAG|TGA)...)*(?:TAA|TAG|TGA)', i) for i in seq]
-print(orf)
+orf = [get_orf(i) for i in seq]
 orf_lengths = [len(j) for i in orf for j in i]
-print(orf_lengths)
-print(sum(orf_lengths))
 
-orf_2 = []
-for i in seq:
-    for j in range(1,len(i),3):
-        orf_2.append(re.findall(r'ATG(?:(?!TAA|TAG|TGA)...)*(?:TAA|TAG|TGA)', i))
+print(max(orf_lengths))
 
-print(orf_2)
+orf_sixteen = [get_orf(seq[12])]
+orf_sixteen_lengths = [len(j) for i in orf_sixteen for j in i]
+print(max(orf_sixteen_lengths))
